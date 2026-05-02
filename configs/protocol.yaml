@@ -1,0 +1,111 @@
+protocol_version: "v0.1.0"
+protocol_date: "2026-05-02"
+
+notes: |
+  Phase 1 reproduction protocol.
+  Mirrors Syntheseus-style controlled evaluation: same split, stock list,
+  search budget, beam size, time limit, augmentation, canonicalization,
+  and eval script across every baseline.
+  Every leaderboard row records protocol_version + protocol_sha.
+
+single_step:
+  uspto_50k:
+    split: schneider_canonical
+    split_source_url: "https://github.com/connorcoley/retrosim/tree/master/retrosim/data"
+    split_sha256: TBD_pin_after_download
+    n_train: 40008
+    n_val: 5001
+    n_test: 5007
+    rxn_class_modes: [unknown, known]
+  uspto_full:
+    split: liu_zheng_chemformer
+    split_source_url: "https://az.box.com/s/7eci3nd9vy0xplqniitpk02rbg9q2zcq"
+    split_sha256: TBD_pin_after_download
+    n_train: 902581
+    n_val: 50131
+    n_test: 50028
+
+multistep:
+  paroutes_n1:
+    source_repo: "https://github.com/MolecularAI/PaRoutes"
+    release_sha: TBD_pin_release_tag
+    n_targets: 10000
+    stock_list_ref: paroutes_n1_stock
+  paroutes_n5:
+    source_repo: "https://github.com/MolecularAI/PaRoutes"
+    release_sha: TBD_pin_release_tag
+    n_targets: 10000
+    stock_list_ref: paroutes_n5_stock
+
+stock_lists:
+  paroutes_n1_stock:
+    description: "PaRoutes n1 building block set"
+    sha256: TBD
+  paroutes_n5_stock:
+    description: "PaRoutes n5 building block set"
+    sha256: TBD
+  emolecules:
+    description: "eMolecules in-stock building blocks"
+    sha256: TBD
+  zinc_in_stock:
+    description: "ZINC15 in-stock subset"
+    sha256: TBD
+
+canonicalization:
+  rdkit_version: "2026.03.1"
+  isomeric_smiles: true
+  kekulize: false
+  remove_atom_mapping: true
+  canonical_tautomer: false
+  charge_handling: preserve
+  salt_handling: split_largest_fragment
+  invalid_smiles_policy: count_then_skip_in_topk
+
+single_step_defaults:
+  beam_size: 50
+  top_k_reported: [1, 3, 5, 10, 20, 50]
+  augmentation_at_inference: false
+  forward_model_for_round_trip: molecular_transformer_uspto_mit
+  round_trip_top_k: 1
+
+multistep_defaults:
+  max_expansions: 500
+  max_depth: 8
+  time_limit_seconds: 180
+  beam_size: 25
+  top_k_reported: [1, 5, 10]
+  diversity_metric: tree_edit_distance
+
+reporting:
+  required_metrics_single_step:
+    - top_1_exact_match
+    - top_3_exact_match
+    - top_5_exact_match
+    - top_10_exact_match
+    - invalid_smiles_rate
+    - round_trip_accuracy
+    - maxfrag_accuracy
+    - candidate_diversity
+  required_metrics_multistep:
+    - top_1_route_accuracy
+    - top_5_route_accuracy
+    - top_10_route_accuracy
+    - solve_rate
+    - mean_route_length
+    - mean_search_time_seconds
+    - mean_model_calls
+    - stock_coverage
+    - route_diversity
+  per_run_metadata_required:
+    - protocol_version
+    - protocol_sha
+    - eval_script_git_sha
+    - model_name
+    - model_checkpoint_sha
+    - benchmark_name
+    - benchmark_split_sha
+    - stock_list_sha
+    - hardware
+    - search_algorithm
+    - wallclock_seconds
+    - n_model_calls

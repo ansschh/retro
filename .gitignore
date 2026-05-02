@@ -1,0 +1,44 @@
+# Caches and build artifacts
+.cache/
+.venv/
+.local/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Data and large artifacts (live on /resnick/scratch, not in git)
+data/
+checkpoints/
+eval_artifacts/
+logs/
+*.ckpt
+*.pt
+*.pth
+*.h5
+*.hdf5
+*.lmdb
+*.npy
+*.npz
+*.parquet
+*.tar
+*.tar.gz
+*.zip
+*.bin
+*.safetensors
+
+# Result dumps. Small leaderboard CSVs are committed explicitly.
+results/*.jsonl
+results/dumps/
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Allow .gitkeep to survive the broad rules above
+!.gitkeep

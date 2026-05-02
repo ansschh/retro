@@ -1,0 +1,22 @@
+[project]
+name = "retro"
+version = "0.0.1"
+description = "Retrosynthesis benchmark harness and stack"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+  "rdkit>=2024.03.1",
+  "numpy<2",
+  "pandas",
+  "pyyaml",
+  "click",
+  "tqdm",
+  "huggingface-hub",
+  "pytest",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = []
