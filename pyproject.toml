@@ -7,10 +7,15 @@ dependencies = [
   "rdkit>=2024.03.1",
   "numpy<2",
   "pandas",
+  "pyarrow",
   "pyyaml",
   "click",
   "tqdm",
+  "requests",
   "huggingface-hub",
+  "transformers>=4.40",
+  "accelerate",
+  "datasets",
   "pytest",
 ]
 
@@ -19,7 +24,7 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["metrics"]
+packages = ["metrics", "harness", "baselines", "baselines.reactiont5"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
