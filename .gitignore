@@ -10,10 +10,11 @@ __pycache__/
 .ruff_cache/
 
 # Data and large artifacts (live on /resnick/scratch, not in git)
-data/
-checkpoints/
-eval_artifacts/
-logs/
+# Leading / anchors to repo root so e.g. scripts/data/ is NOT excluded.
+/data/
+/checkpoints/
+/eval_artifacts/
+/logs/
 *.ckpt
 *.pt
 *.pth
