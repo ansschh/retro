@@ -14,17 +14,20 @@ source .venv/bin/activate
 
 mkdir -p data/smoke results logs
 
-# Generate the hermetic smoke dataset (idempotent)
+# Generate the hermetic 10-reaction smoke dataset (idempotent).
 python scripts/data/make_smoke_dataset.py
 
-# Run ReactionT5 inference, top-10
+# Run inference, capturing wallclock around the call.
+START=$(date +%s)
 python -m baselines.reactiont5.run \
   --test-data data/smoke/uspto50k_smoke_test.parquet \
   --output-jsonl results/reactiont5_smoke_topk10.jsonl \
   --topk 10 \
   --batch-size 8
+END=$(date +%s)
+WALLCLOCK=$((END - START))
 
-# Score and append a leaderboard row
+# Score and append a leaderboard row.
 python -m harness.leaderboard \
   --predictions results/reactiont5_smoke_topk10.jsonl \
   --leaderboard results/leaderboard.csv \
@@ -32,7 +35,7 @@ python -m harness.leaderboard \
   --model-checkpoint-sha sagawa_ReactionT5v2_USPTO_50k \
   --benchmark-name uspto50k_SMOKE \
   --benchmark-split-sha smoke_v0_10rxn \
-  --wallclock-seconds $(grep -oP 'in \K[0-9.]+(?=s)' "$SLURM_SUBMIT_DIR/logs/${SLURM_JOB_NAME}_${SLURM_JOB_ID}.out" | head -1 || echo 0) \
+  --wallclock-seconds "$WALLCLOCK" \
   --hardware "$(nvidia-smi --query-gpu=name --format=csv,noheader | head -1)" \
   --git-sha "$(git rev-parse --short HEAD)"
 
